@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Office Crime</string>
+	<string name="textview_crime_title_hint">Enter a title for this crime</string>
+</resources>
