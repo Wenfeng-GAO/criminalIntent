@@ -3,4 +3,7 @@
 
     <string name="app_name">Office Crime</string>
 	<string name="textview_crime_title_hint">Enter a title for this crime</string>
+	<string name="textview_crime_title_label">Title</string>
+	<string name="textview_crime_details">Details</string>
+	<string name="checkbox_crime_solved">Solved?</string>
 </resources>
