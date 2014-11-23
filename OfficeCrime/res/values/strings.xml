@@ -2,8 +2,13 @@
 <resources>
 
     <string name="app_name">Office Crime</string>
-	<string name="textview_crime_title_hint">Enter a title for this crime</string>
-	<string name="textview_crime_title_label">Title</string>
-	<string name="textview_crime_details">Details</string>
-	<string name="checkbox_crime_solved">Solved?</string>
+    <string name="textview_crime_title_hint">Enter a title for this crime</string>
+    <string name="textview_crime_title_label">Title</string>
+    <string name="textview_crime_details">Details</string>
+    <string name="checkbox_crime_solved">Solved?</string>
+    <string name="crime_list_title">Crimes</string>
+    <string name="title_activity_crime_list">Office Crime</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
