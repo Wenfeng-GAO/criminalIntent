@@ -1,6 +1,7 @@
 package com.wenfeng.officecrime;
 
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -17,15 +18,25 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
 public class CrimeFragment extends Fragment {
-	Crime crime;
-	EditText editTextCrimeTitle;
-	Button buttonCrimeDate;
-	CheckBox checkBoxCrimeSolved;
+	public static final String INTENT_EXTRA_KEY_CRIME_ID = "com.wenfeng.offcecrime.crimefragment.crimeId";
+	private Crime crime;
+	private EditText editTextCrimeTitle;
+	private Button buttonCrimeDate;
+	private CheckBox checkBoxCrimeSolved;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		crime = new Crime();
+		UUID crimeId = (UUID) getArguments().getSerializable(INTENT_EXTRA_KEY_CRIME_ID);
+		crime = CrimeLab.get(getActivity()).getCrime(crimeId);
+	}
+	
+	public static CrimeFragment newInstance(UUID crimeId) {
+		Bundle args = new Bundle();
+		args.putSerializable(INTENT_EXTRA_KEY_CRIME_ID, crimeId);
+		CrimeFragment crimeFragment = new CrimeFragment();
+		crimeFragment.setArguments(args);
+		return crimeFragment;
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -36,6 +47,7 @@ public class CrimeFragment extends Fragment {
 		
 		// title editText
 		editTextCrimeTitle = (EditText) view.findViewById(R.id.edittext_crime_title);
+		editTextCrimeTitle.setText(crime.getTitle());
 		editTextCrimeTitle.addTextChangedListener(new TextWatcher() {
 			
 			@Override
@@ -63,6 +75,7 @@ public class CrimeFragment extends Fragment {
 		
 		// solved checkBox
 		checkBoxCrimeSolved = (CheckBox) view.findViewById(R.id.checkbox_crime_solved);
+		checkBoxCrimeSolved.setChecked(crime.isSolved());
 		checkBoxCrimeSolved.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
