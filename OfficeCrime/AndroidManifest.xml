@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.wenfeng.officecrime.CrimeActivity"
+            android:name="com.wenfeng.officecrime.CrimePagerActivity"
             android:label="@string/app_name" >
         </activity>
         <activity android:name=".CrimeListActivity"

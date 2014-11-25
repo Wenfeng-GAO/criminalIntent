@@ -1,15 +1,19 @@
 package com.wenfeng.officecrime;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -19,6 +23,9 @@ import android.widget.EditText;
 
 public class CrimeFragment extends Fragment {
 	public static final String INTENT_EXTRA_KEY_CRIME_ID = "com.wenfeng.offcecrime.crimefragment.crimeId";
+	private static final String DIALOG_DATA = "com.wenfeng.offcecrime.date";
+	private static final int DIALOG_REQUEST_CODE = 1;
+	
 	private Crime crime;
 	private EditText editTextCrimeTitle;
 	private Button buttonCrimeDate;
@@ -70,8 +77,16 @@ public class CrimeFragment extends Fragment {
 		
 		// date button
 		buttonCrimeDate = (Button) view.findViewById(R.id.button_crime_date);
-		buttonCrimeDate.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy").format(crime.getDate()));
-		buttonCrimeDate.setEnabled(false);
+		updateButtonText();
+		buttonCrimeDate.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				DataPickerFragment dateDialog = DataPickerFragment.newInstance(crime.getDate());
+				dateDialog.setTargetFragment(CrimeFragment.this, DIALOG_REQUEST_CODE);
+				dateDialog.show(getActivity().getSupportFragmentManager(), DIALOG_DATA);
+			}
+		});
 		
 		// solved checkBox
 		checkBoxCrimeSolved = (CheckBox) view.findViewById(R.id.checkbox_crime_solved);
@@ -85,6 +100,22 @@ public class CrimeFragment extends Fragment {
 		});
 		
 		return view;
+	}
+
+	private void updateButtonText() {
+		buttonCrimeDate.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy").format(crime.getDate()));
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode == Activity.RESULT_OK) {
+			if(requestCode == DIALOG_REQUEST_CODE) {
+				Date date = (Date) data.getSerializableExtra(DataPickerFragment.EXTRA_KEY_DATE);
+				crime.setDate(date);
+				updateButtonText();
+			}
+		}
 	}
 	
 
