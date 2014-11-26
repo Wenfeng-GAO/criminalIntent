@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CrimeListFragment extends ListFragment {
 	private ArrayList<Crime> crimes;
@@ -35,7 +34,6 @@ public class CrimeListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Crime crime = ((CrimeAdapter)getListAdapter()).getItem(position);
-//		Toast.makeText(getActivity().getApplicationContext(), crime.getTitle() + " was clicked", Toast.LENGTH_SHORT).show();
 		
 		Intent intent = new Intent(getActivity().getApplicationContext(), CrimePagerActivity.class);
 		intent.putExtra(CrimeFragment.INTENT_EXTRA_KEY_CRIME_ID, crime.getCrimeId());
@@ -59,7 +57,8 @@ public class CrimeListFragment extends ListFragment {
 			TextView textViewCrimeDate = (TextView) convertView.findViewById(R.id.textview_crime_date);
 			CheckBox checkBoxCrimeSolved = (CheckBox) convertView.findViewById(R.id.checkbox_crime_solved);
 			textViewCrimeTitle.setText(getItem(position).getTitle());
-			textViewCrimeDate.setText(DateFormat.format("yyy MMM dd", getItem(position).getDate()));
+			textViewCrimeDate.setText(DateFormat.format("yyy MMM dd [k:m]" +
+					"", getItem(position).getDate()));
 			checkBoxCrimeSolved.setChecked(getItem(position).isSolved());
 			
 			return convertView;

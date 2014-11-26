@@ -31,6 +31,8 @@ public class CrimeFragment extends Fragment {
 	private Button buttonCrimeDate;
 	private CheckBox checkBoxCrimeSolved;
 	
+	private Button buttonCrimeTime;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,7 +79,7 @@ public class CrimeFragment extends Fragment {
 		
 		// date button
 		buttonCrimeDate = (Button) view.findViewById(R.id.button_crime_date);
-		updateButtonText();
+//		updateButtonText();
 		buttonCrimeDate.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -85,6 +87,19 @@ public class CrimeFragment extends Fragment {
 				DataPickerFragment dateDialog = DataPickerFragment.newInstance(crime.getDate());
 				dateDialog.setTargetFragment(CrimeFragment.this, DIALOG_REQUEST_CODE);
 				dateDialog.show(getActivity().getSupportFragmentManager(), DIALOG_DATA);
+			}
+		});
+		
+		// time button
+		buttonCrimeTime = (Button) view.findViewById(R.id.button_crime_time);
+		updateButtonText();
+		buttonCrimeTime.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				TimePickerFragment timeDialog = TimePickerFragment.newInstance(crime.getDate());
+				timeDialog.setTargetFragment(CrimeFragment.this, DIALOG_REQUEST_CODE);
+				timeDialog.show(getActivity().getSupportFragmentManager(), DIALOG_DATA);
 			}
 		});
 		
@@ -102,8 +117,10 @@ public class CrimeFragment extends Fragment {
 		return view;
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	private void updateButtonText() {
 		buttonCrimeDate.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy").format(crime.getDate()));
+		buttonCrimeTime.setText(new SimpleDateFormat("k:m").format(crime.getDate()));
 	}
 
 	@Override
