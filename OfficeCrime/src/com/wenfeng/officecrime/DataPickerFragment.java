@@ -51,7 +51,7 @@ public class DataPickerFragment extends DialogFragment {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					sendResult(Activity.RESULT_OK);
+					sendResult(Activity.RESULT_CANCELED);
 				}
 			})
 			.create();
