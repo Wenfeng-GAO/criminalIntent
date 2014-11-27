@@ -1,7 +1,6 @@
 package com.wenfeng.officecrime;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -127,12 +125,7 @@ public class CrimeFragment extends Fragment {
 	@SuppressLint("SimpleDateFormat")
 	private void updateButtonText() {
 		buttonCrimeDate.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy").format(crime.getDate()));
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(crime.getDate());
-		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		int minute = calendar.get(Calendar.MINUTE);
-		Log.d(TAG, "hour: " + hour + "    minute: " + minute);
-		buttonCrimeTime.setText(new SimpleDateFormat("k:m").format(crime.getDate()));
+		buttonCrimeTime.setText(new SimpleDateFormat("HH:mm").format(crime.getDate()));
 	}
 
 	@Override
