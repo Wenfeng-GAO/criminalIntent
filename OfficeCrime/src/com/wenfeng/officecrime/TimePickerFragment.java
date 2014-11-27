@@ -12,11 +12,13 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 
 public class TimePickerFragment extends DialogFragment {
+	private static final String TAG = TimePickerFragment.class.getSimpleName();
 	private Date mDate;
 	private TimePicker mTimePicker;
 	private Calendar calendar;
@@ -42,6 +44,8 @@ public class TimePickerFragment extends DialogFragment {
 				mDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), hour, minute)
 				.getTime();
 				getArguments().putSerializable(DataPickerFragment.EXTRA_KEY_DATE, mDate);
+				Log.d(TAG, "Time:" + hour + ":" + minute);
+				
 			}
 		});
 		
