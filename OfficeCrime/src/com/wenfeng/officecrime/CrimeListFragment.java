@@ -2,10 +2,13 @@ package com.wenfeng.officecrime;
 
 import java.util.ArrayList;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,8 +19,10 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class CrimeListFragment extends ListFragment {
 	private ArrayList<Crime> crimes;
+	private boolean isSubtitleVisible;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -26,14 +31,34 @@ public class CrimeListFragment extends ListFragment {
 		getActivity().setTitle(R.string.crime_list_title);
 		crimes = CrimeLab.get(getActivity()).getCrimes();
 		setListAdapter(new CrimeAdapter(crimes));
+		setRetainInstance(true);
+		isSubtitleVisible = false;
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.crime_list, menu);
+		MenuItem showSubtitle = menu.findItem(R.id.menu_item_show_subtitle);
+		if(isSubtitleVisible && showSubtitle != null) {
+			showSubtitle.setTitle(R.string.menubar_hide_subtitle);
+		}
 	}
 
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = super.onCreateView(inflater, container, savedInstanceState);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			if(isSubtitleVisible) {
+				getActivity().getActionBar().setSubtitle(R.string.subtitle);
+			}
+		}
+		return view;
+	}
+	
+
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
@@ -43,6 +68,17 @@ public class CrimeListFragment extends ListFragment {
 			Intent intent = new Intent(getActivity().getApplicationContext(), CrimePagerActivity.class);
 			intent.putExtra(CrimeFragment.INTENT_EXTRA_KEY_CRIME_ID, crime.getCrimeId());
 			startActivityForResult(intent, 0);
+			return true;
+		case R.id.menu_item_show_subtitle:
+			if (getActivity().getActionBar().getSubtitle() == null) {
+				getActivity().getActionBar().setSubtitle(R.string.subtitle);
+				item.setTitle(R.string.menubar_hide_subtitle);
+				isSubtitleVisible = true;
+			} else {
+				getActivity().getActionBar().setSubtitle(null);
+				item.setTitle(R.string.menubar_show_subtitle);
+				isSubtitleVisible = false;
+			}
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

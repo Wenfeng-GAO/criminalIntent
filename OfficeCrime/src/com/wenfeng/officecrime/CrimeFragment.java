@@ -5,13 +5,17 @@ import java.util.Date;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -37,10 +41,24 @@ public class CrimeFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		UUID crimeId = (UUID) getArguments().getSerializable(INTENT_EXTRA_KEY_CRIME_ID);
 		crime = CrimeLab.get(getActivity()).getCrime(crimeId);
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case android.R.id.home:
+			if(NavUtils.getParentActivityName(getActivity()) != null) {
+				NavUtils.navigateUpFromSameTask(getActivity());
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 	public static CrimeFragment newInstance(UUID crimeId) {
 		Bundle args = new Bundle();
 		args.putSerializable(INTENT_EXTRA_KEY_CRIME_ID, crimeId);
@@ -49,11 +67,18 @@ public class CrimeFragment extends Fragment {
 		return crimeFragment;
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_crime, container, false);
+		
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			if (NavUtils.getParentActivityName(getActivity()) != null) {
+				getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+			}
+		}
 		
 		// title editText
 		editTextCrimeTitle = (EditText) view.findViewById(R.id.edittext_crime_title);
