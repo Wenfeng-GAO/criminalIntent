@@ -13,8 +13,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,7 +50,20 @@ public class CrimeListFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = super.onCreateView(inflater, container, savedInstanceState);
+		View view = inflater.inflate(R.layout.fragment_list_crime, container, false);
+		View emptyView = view.findViewById(android.R.id.empty);
+		Button button = (Button) emptyView.findViewById(R.id.button);
+		button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Crime crime = new Crime();
+				CrimeLab.get(getActivity()).addCrime(crime);
+				Intent intent = new Intent(getActivity().getApplicationContext(), CrimePagerActivity.class);
+				intent.putExtra(CrimeFragment.INTENT_EXTRA_KEY_CRIME_ID, crime.getCrimeId());
+				startActivityForResult(intent, 0);
+			}
+		});
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			if(isSubtitleVisible) {
 				getActivity().getActionBar().setSubtitle(R.string.subtitle);
