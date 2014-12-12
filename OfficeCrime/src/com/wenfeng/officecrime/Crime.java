@@ -3,7 +3,14 @@ package com.wenfeng.officecrime;
 import java.util.Date;
 import java.util.UUID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Crime {
+	private static final String JSON_ID = "id";
+	private static final String JSON_TITLE = "title";
+	private static final String JSON_SOLVED = "solved";
+	private static final String JSON_DATE = "date";
 
 	private UUID crimeId;
 	private String title;
@@ -15,6 +22,15 @@ public class Crime {
 		date = new Date();
 	}
 
+	public Crime(JSONObject json) throws JSONException {
+		crimeId = UUID.fromString(json.getString(JSON_ID));
+		if(json.has(JSON_TITLE)) {
+			title = json.getString(JSON_TITLE);
+		}
+		solved = json.getBoolean(JSON_SOLVED);
+		date = new Date(json.getLong(JSON_DATE));
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -48,4 +64,12 @@ public class Crime {
 		return title;
 	}
 	
+	public JSONObject toJSON() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put(JSON_ID, crimeId.toString());
+		json.put(JSON_TITLE, title);
+		json.put(JSON_SOLVED, solved);
+		json.put(JSON_DATE, date.getTime());
+		return json;
+	}
 }
