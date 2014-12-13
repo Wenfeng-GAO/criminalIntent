@@ -65,7 +65,7 @@ public class CriminalIntentJSONSerializer {
 		// write the file to disk
 		Writer writer = null;
 		try {
-			OutputStream outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+			OutputStream outputStream = context.openFileOutput(filename, Context.MODE_APPEND);
 			writer = new OutputStreamWriter(outputStream);
 			writer.write(jsonArray.toString());
 		} catch (FileNotFoundException e) {

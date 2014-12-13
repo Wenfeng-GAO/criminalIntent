@@ -7,11 +7,13 @@ import java.util.UUID;
 import org.json.JSONException;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 public class CrimeLab {
 	private static final String TAG = CrimeLab.class.getSimpleName();
 	private static final String FILENAME = "crimes.json";
+//	private static final String FILENAME = Environment.getExternalStorageDirectory().getPath();
 	
 	private CriminalIntentJSONSerializer mSerializer;
 	
@@ -21,7 +23,6 @@ public class CrimeLab {
 	
 	private CrimeLab(Context context) {
 		mContext = context;
-//		crimes = new ArrayList<Crime>();
 		mSerializer = new CriminalIntentJSONSerializer(mContext, FILENAME);
 		
 		try {
@@ -54,6 +55,10 @@ public class CrimeLab {
 			}
 		}
 		return null;
+	}
+	
+	public void deleteCrime(Crime crime) {
+		crimes.remove(crime);
 	}
 	
 	public boolean saveCrimes() {

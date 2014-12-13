@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class CrimeListFragment extends ListFragment {
@@ -48,6 +51,13 @@ public class CrimeListFragment extends ListFragment {
 	}
 
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_list_crime, container, false);
@@ -69,6 +79,15 @@ public class CrimeListFragment extends ListFragment {
 				getActivity().getActionBar().setSubtitle(R.string.subtitle);
 			}
 		}
+		
+		ListView listView = (ListView) view.findViewById(android.R.id.list);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			registerForContextMenu(listView);
+		} else {
+			// use contextual action bar on Honeycomb or higher
+			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		}
+		
 		return view;
 	}
 	
@@ -117,6 +136,21 @@ public class CrimeListFragment extends ListFragment {
 		startActivity(intent);
 	}
 	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
+		Crime crime = adapter.getItem(info.position);
+		
+		switch(item.getItemId()) {
+		case R.id.menu_item_delete_crime:
+			CrimeLab.get(getActivity()).deleteCrime(crime);
+			adapter.notifyDataSetChanged();
+			return true;
+		}
+		return super.onContextItemSelected(item);
+	}
+
 	private class CrimeAdapter extends ArrayAdapter<Crime> {
 		
 		public CrimeAdapter(ArrayList<Crime> crimes) {
@@ -144,3 +178,4 @@ public class CrimeListFragment extends ListFragment {
 	}
 	
 }
+			
