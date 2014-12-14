@@ -3,6 +3,8 @@ package com.wenfeng.officecrime;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,7 +12,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 
-public class CrimePagerActivity extends FragmentActivity {
+public class CrimePagerActivity extends SherlockFragmentActivity {
 	private ViewPager viewPager;
 	private ArrayList<Crime> crimes;
 	@Override

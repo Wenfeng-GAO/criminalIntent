@@ -2,18 +2,10 @@ package com.wenfeng.officecrime;
 
 import java.util.Date;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
-public class ChooseDialogFragment extends DialogFragment {
+
+
+public class ChooseDialogFragment extends SherlockDialogFragment {
 	private static final int DIALOG_REQUEST_CODE = 1;
 	private static final String CHOOSEDIALOGFRAGMENT_SHOW_TAG = "com.wenfeng.officecrime.choosedialogfragment.show.tag";
 	private Date date;
