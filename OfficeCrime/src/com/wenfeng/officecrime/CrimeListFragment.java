@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.format.DateFormat;
+import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -17,12 +18,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class CrimeListFragment extends ListFragment {
@@ -86,9 +88,55 @@ public class CrimeListFragment extends ListFragment {
 		} else {
 			// use contextual action bar on Honeycomb or higher
 			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+			listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+				
+				@Override
+				public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
+					// required, but not used in this implementation
+					return false;
+				}
+				
+				@Override
+				public void onDestroyActionMode(ActionMode arg0) {
+					// required, but not used in this implementation
+				}
+				
+				// actionMode.Callback methods
+				@Override
+				public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+					MenuInflater inflater = mode.getMenuInflater();
+					inflater.inflate(R.menu.crime_list_item_context, menu);
+					return true;
+				}
+				
+				@Override
+				public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+					switch (menuItem.getItemId()) {
+					case R.id.menu_item_delete_crime:
+						CrimeAdapter adapter = (CrimeAdapter)getListAdapter();
+						CrimeLab crimeLab = CrimeLab.get(getActivity());
+						for (int i = adapter.getCount()-1; i >= 0; i--) {
+							if (getListView().isItemChecked(i)) {
+								crimeLab.deleteCrime(adapter.getItem(i));
+							}
+						}
+						mode.finish();
+						adapter.notifyDataSetChanged();
+						return true;
+					default:
+						return false;
+					}
+				}
+				
+				@Override
+				public void onItemCheckedStateChanged(ActionMode arg0, int arg1, long arg2,
+						boolean arg3) {
+					// required, but not used in this  implementation
+				}
+			});
 		}
 		
-		return view;
+ 		return view;
 	}
 	
 

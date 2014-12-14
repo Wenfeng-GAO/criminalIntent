@@ -15,6 +15,8 @@ import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,6 +57,10 @@ public class CrimeFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
+		
+		// delete and navigate to home page
+		case R.id.menu_item_delete_crime:
+			CrimeLab.get(getActivity()).deleteCrime(crime);
 		case android.R.id.home:
 			if(NavUtils.getParentActivityName(getActivity()) != null) {
 				NavUtils.navigateUpFromSameTask(getActivity());
@@ -63,6 +69,12 @@ public class CrimeFragment extends Fragment {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.crime, menu);
 	}
 
 	public static CrimeFragment newInstance(UUID crimeId) {
