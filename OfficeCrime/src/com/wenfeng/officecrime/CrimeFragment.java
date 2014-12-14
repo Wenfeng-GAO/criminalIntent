@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 public class CrimeFragment extends Fragment {
 	private static final String TAG = CrimeFragment.class.getSimpleName();
@@ -37,6 +40,7 @@ public class CrimeFragment extends Fragment {
 	private EditText editTextCrimeTitle;
 	private Button buttonCrimeDate;
 	private CheckBox checkBoxCrimeSolved;
+	private ImageButton imageButtonphotoButton;
 	
 	private Button buttonCrimeTime;
 	
@@ -161,6 +165,25 @@ public class CrimeFragment extends Fragment {
 				crime.setSolved(isChecked);
 			}
 		});
+		
+		// imageButton take photo
+		imageButtonphotoButton = (ImageButton) view.findViewById(R.id.imageButton_crime_photo_button);
+		imageButtonphotoButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				startActivity(new Intent(getActivity().getApplicationContext(), CrimeCameraActivity.class));
+			}
+		});
+		// If camera is not available, disable camera functionality
+		PackageManager pm = getActivity().getPackageManager();
+		boolean isCameraAvailable = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
+				pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT) ||
+				Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD ||
+				Camera.getNumberOfCameras() > 0;
+		if (!isCameraAvailable) {
+			imageButtonphotoButton.setEnabled(false);
+		}
 		
 		return view;
 	}
