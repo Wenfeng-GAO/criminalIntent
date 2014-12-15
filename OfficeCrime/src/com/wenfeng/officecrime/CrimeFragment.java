@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +36,7 @@ public class CrimeFragment extends Fragment {
 	public static final String INTENT_EXTRA_KEY_CRIME_ID = "com.wenfeng.offcecrime.crimefragment.crimeId";
 	private static final String DIALOG_DATA = "com.wenfeng.offcecrime.date";
 	private static final int DIALOG_REQUEST_CODE = 1;
+	private static final int REQUEST_PHOTO = 2;
 	
 	private Crime crime;
 	private EditText editTextCrimeTitle;
@@ -172,7 +174,7 @@ public class CrimeFragment extends Fragment {
 			
 			@Override
 			public void onClick(View arg0) {
-				startActivity(new Intent(getActivity().getApplicationContext(), CrimeCameraActivity.class));
+				startActivityForResult(new Intent(getActivity().getApplicationContext(), CrimeCameraActivity.class), REQUEST_PHOTO);
 			}
 		});
 		// If camera is not available, disable camera functionality
@@ -202,6 +204,14 @@ public class CrimeFragment extends Fragment {
 				Date date = (Date) data.getSerializableExtra(DataPickerFragment.EXTRA_KEY_DATE);
 				crime.setDate(date);
 				updateButtonText();
+			} else if (requestCode == REQUEST_PHOTO) {
+				// Create a new photo object and attach it to the crime
+				String filename = data.getStringExtra(CrimeCameraFragment.EXTRA_PHOTO_FILENAME);
+				if (filename != null) {
+					Photo photo = new Photo(filename);
+					crime.setPhoto(photo);
+					Log.i(TAG, "Crime: " + crime.getTitle() + " has a photo.");
+				}
 			}
 		}
 	}
