@@ -9,10 +9,12 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,11 +32,13 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class CrimeFragment extends Fragment {
 	private static final String TAG = CrimeFragment.class.getSimpleName();
 	public static final String INTENT_EXTRA_KEY_CRIME_ID = "com.wenfeng.offcecrime.crimefragment.crimeId";
 	private static final String DIALOG_DATA = "com.wenfeng.offcecrime.date";
+	private static final String DIALOG_IMAGE = "image";
 	private static final int DIALOG_REQUEST_CODE = 1;
 	private static final int REQUEST_PHOTO = 2;
 	
@@ -43,6 +47,7 @@ public class CrimeFragment extends Fragment {
 	private Button buttonCrimeDate;
 	private CheckBox checkBoxCrimeSolved;
 	private ImageButton imageButtonphotoButton;
+	private ImageView imageViewCrimePhoto;
 	
 	private Button buttonCrimeTime;
 	
@@ -187,6 +192,20 @@ public class CrimeFragment extends Fragment {
 			imageButtonphotoButton.setEnabled(false);
 		}
 		
+		// ImageView crime photo
+		imageViewCrimePhoto = (ImageView) view.findViewById(R.id.imageView_crime_photo);
+		imageViewCrimePhoto.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Photo photo = crime.getPhoto();
+				if (photo != null) {
+					FragmentManager fm = getActivity().getSupportFragmentManager();
+					String path = getActivity().getFileStreamPath(photo.getFilename()).getAbsolutePath();
+					ImageFragment.newInstance(path).show(fm, DIALOG_IMAGE);
+				}
+			}
+		});
 		return view;
 	}
 
@@ -210,11 +229,33 @@ public class CrimeFragment extends Fragment {
 				if (filename != null) {
 					Photo photo = new Photo(filename);
 					crime.setPhoto(photo);
-					Log.i(TAG, "Crime: " + crime.getTitle() + " has a photo.");
+					showPhoto();
 				}
 			}
 		}
 	}
 	
+	@Override
+	public void onStop() {
+		super.onStop();
+		PictureUtils.cleanImageView(imageViewCrimePhoto);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		showPhoto();
+	}
+
+	private void showPhoto() {
+		// (Re)set the image button's image based on our photo
+		Photo photo = crime.getPhoto();
+		BitmapDrawable bitmapDrawable = null;
+		if (photo != null) {
+			String path = getActivity().getFileStreamPath(photo.getFilename()).getAbsolutePath();
+			bitmapDrawable = PictureUtils.getScaledDrawable(getActivity(), path);
+		}
+		imageViewCrimePhoto.setImageDrawable(bitmapDrawable);
+	}
 
 }
