@@ -55,11 +55,27 @@ public class CrimeFragment extends Fragment {
 	private CheckBox checkBoxCrimeSolved;
 	private ImageButton imageButtonphotoButton;
 	private ImageView imageViewCrimePhoto;
-	
 	private Button buttonCrimeTime;
-	
 	private Button buttonReport, buttonSuspect, buttonCall;
+	private Callbacks mCallBacks;
 	
+	/* Required interface for hosting activities. */
+	public interface Callbacks {
+		void onCrimeUpdated(Crime crime);
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mCallBacks = (Callbacks) activity;
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mCallBacks = null;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -126,6 +142,7 @@ public class CrimeFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				crime.setTitle(s.toString());
+				mCallBacks.onCrimeUpdated(crime);
 			}
 			
 			@Override
@@ -179,6 +196,7 @@ public class CrimeFragment extends Fragment {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				crime.setSolved(isChecked);
+				mCallBacks.onCrimeUpdated(crime);
 			}
 		});
 		
@@ -285,6 +303,7 @@ public class CrimeFragment extends Fragment {
 			if(requestCode == DIALOG_REQUEST_CODE) {
 				Date date = (Date) data.getSerializableExtra(DataPickerFragment.EXTRA_KEY_DATE);
 				crime.setDate(date);
+				mCallBacks.onCrimeUpdated(crime);
 				updateButtonText();
 			} else if (requestCode == REQUEST_PHOTO) {
 				// Create a new photo object and attach it to the crime
@@ -292,6 +311,7 @@ public class CrimeFragment extends Fragment {
 				if (filename != null) {
 					Photo photo = new Photo(filename);
 					crime.setPhoto(photo);
+					mCallBacks.onCrimeUpdated(crime);
 					showPhoto();
 				}
 			} else if (requestCode == REQUEST_CONTACT) {
@@ -300,7 +320,6 @@ public class CrimeFragment extends Fragment {
 				// Specify which fields you want your query to return values for.
 				String[] queryFields = new String[] {
 						ContactsContract.Contacts.DISPLAY_NAME,
-						ContactsContract.Contacts.HAS_PHONE_NUMBER
 				};
 				
 				// Perform your query - the contactUri is like a "where" clause here
@@ -315,9 +334,8 @@ public class CrimeFragment extends Fragment {
 				// Pull out the first column of the first row of data that is your suspect's name
 				cursor.moveToFirst();
 				String suspect = cursor.getString(0);
-				String number = cursor.getString(1);
 				crime.setSuspect(suspect);
-//				buttonCall.setText(number);
+				mCallBacks.onCrimeUpdated(crime);
 				buttonSuspect.setText(suspect);
 				cursor.close();
 			}
