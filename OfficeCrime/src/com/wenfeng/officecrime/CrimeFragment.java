@@ -16,12 +16,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,6 +47,7 @@ public class CrimeFragment extends Fragment {
 	private static final int DIALOG_REQUEST_CODE = 1;
 	private static final int REQUEST_PHOTO = 2;
 	private static final int REQUEST_CONTACT = 3;
+	private static final int REQUEST_DIAL = 4;
 	
 	private Crime crime;
 	private EditText editTextCrimeTitle;
@@ -55,7 +58,7 @@ public class CrimeFragment extends Fragment {
 	
 	private Button buttonCrimeTime;
 	
-	private Button buttonReport, buttonSuspect;
+	private Button buttonReport, buttonSuspect, buttonCall;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -242,6 +245,30 @@ public class CrimeFragment extends Fragment {
 			buttonSuspect.setText(crime.getSuspect());
 		}
 		
+		// Button call suspect
+		buttonCall = (Button) view.findViewById(R.id.button_call);
+		buttonCall.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				String[] projection = {
+						Phone.NUMBER
+				};
+				String selection = crime.getSuspect()==null ? null : Phone.DISPLAY_NAME + " = '" + crime.getSuspect() + "'";
+				Cursor cursor = getActivity().getContentResolver().query(Phone.CONTENT_URI, projection, selection, null, null);
+				cursor.moveToFirst();
+				if (cursor.getCount() == 1) {
+					Uri number = Uri.parse("tel:"+ cursor.getString(0));
+					Intent intent = new Intent(Intent.ACTION_DIAL, number);
+					startActivityForResult(intent, REQUEST_DIAL);
+					Log.d(TAG, "cursor count:" + cursor.getCount());
+				} else {
+					Log.d(TAG, "cursor count:" + cursor.getCount());
+					cursor.close();
+				}
+			}
+		});
+		
 		return view;
 	}
 
@@ -272,7 +299,8 @@ public class CrimeFragment extends Fragment {
 				
 				// Specify which fields you want your query to return values for.
 				String[] queryFields = new String[] {
-						ContactsContract.Contacts.DISPLAY_NAME
+						ContactsContract.Contacts.DISPLAY_NAME,
+						ContactsContract.Contacts.HAS_PHONE_NUMBER
 				};
 				
 				// Perform your query - the contactUri is like a "where" clause here
@@ -287,7 +315,9 @@ public class CrimeFragment extends Fragment {
 				// Pull out the first column of the first row of data that is your suspect's name
 				cursor.moveToFirst();
 				String suspect = cursor.getString(0);
+				String number = cursor.getString(1);
 				crime.setSuspect(suspect);
+//				buttonCall.setText(number);
 				buttonSuspect.setText(suspect);
 				cursor.close();
 			}
